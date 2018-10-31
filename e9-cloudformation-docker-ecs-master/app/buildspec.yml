@@ -1,0 +1,42 @@
+version: 0.2
+
+#env:
+  #variables:
+     # key: "value"
+     # key: "value"
+  #parameter-store:
+     # key: "value"
+     # key: "value"
+
+phases:
+  #install:
+    #commands:
+      # - command
+      # - command
+  pre_build:
+    commands:
+    - echo Logging in to Amazon ECR....
+    - aws --version
+    - aws ecr get-login --region eu-west-2 --no-include-email
+    - REPOSITORY_URI=495823048798.dkr.ecr.eu-west-2.amazonaws.com/books-api
+    - IMAGE_TAG=latest
+  build:
+    commands:
+    - echo Build started on `date`
+    - echo Building the Docker image...
+    - docker build -t $REPOSITORY_URI:latest .
+    - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
+  post_build:
+    commands:
+    - echo Build completed on `date`
+    - echo Pushing the Docker image...
+    - eval $(aws ecr get-login --region eu-west-2 --no-include-email)
+    - docker push 495823048798.dkr.ecr.eu-west-2.amazonaws.com/books-api:latest
+#artifacts:
+    # - location
+    # - location
+  #discard-paths: yes
+  #base-directory: location
+#cache:
+  #paths:
+    # - paths
